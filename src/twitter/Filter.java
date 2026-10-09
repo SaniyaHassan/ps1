@@ -3,6 +3,7 @@
  */
 package twitter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,7 +28,14 @@ public class Filter {
      *         in the same order as in the input list.
      */
     public static List<Tweet> writtenBy(List<Tweet> tweets, String username) {
-        throw new RuntimeException("not implemented");
+        List<Tweet> result = new ArrayList<>();
+        for (Tweet tweet : tweets) {
+            // usernames are case-insensitive
+            if (tweet.getAuthor().equalsIgnoreCase(username)) {
+                result.add(tweet);
+            }
+        }
+        return result;
     }
 
     /**
@@ -41,7 +49,15 @@ public class Filter {
      *         in the same order as in the input list.
      */
     public static List<Tweet> inTimespan(List<Tweet> tweets, Timespan timespan) {
-        throw new RuntimeException("not implemented");
+        List<Tweet> result = new ArrayList<>();
+        for (Tweet tweet : tweets) {
+            // a Timespan includes its endpoints
+            if (!tweet.getTimestamp().isBefore(timespan.getStart())
+                    && !tweet.getTimestamp().isAfter(timespan.getEnd())) {
+                result.add(tweet);
+            }
+        }
+        return result;
     }
 
     /**
@@ -60,7 +76,29 @@ public class Filter {
      *         same order as in the input list.
      */
     public static List<Tweet> containing(List<Tweet> tweets, List<String> words) {
-        throw new RuntimeException("not implemented");
+        List<Tweet> result = new ArrayList<>();
+        for (Tweet tweet : tweets) {
+            if (hasAnyWord(tweet.getText(), words)) {
+                result.add(tweet);
+            }
+        }
+        return result;
+    }
+
+    /*
+     * Check whether a tweet text contains at least one of the words, comparing
+     * whole words without regard to case.
+     */
+    private static boolean hasAnyWord(String text, List<String> words) {
+        for (String tweetWord : text.split(" ")) {
+            for (String word : words) {
+                // two spaces in a row give an empty string, and words are nonempty
+                if (!tweetWord.isEmpty() && tweetWord.equalsIgnoreCase(word)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }
