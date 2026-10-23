@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -71,6 +72,30 @@ public class Main {
         System.out.println("tweets containing \"rivest\" or \"pset\":");
         for (Tweet tweet : Filter.containing(tweets, Arrays.asList("rivest", "pset"))) {
             System.out.println("    " + tweet);
+        }
+
+        // Task 3 (Lab 07): SocialNetwork
+        final Map<String, Set<String>> followsGraph =
+                SocialNetwork.guessFollowsGraph(tweets);
+        System.out.println();
+        System.out.println("follows graph has " + followsGraph.size() + " nodes:");
+        for (Map.Entry<String, Set<String>> entry : followsGraph.entrySet()) {
+            System.out.println("    " + entry.getKey() + " follows " + entry.getValue());
+        }
+
+        // print the top-N influencers with the number of followers of each
+        final int count = 10;
+        final List<String> influencers = SocialNetwork.influencers(followsGraph);
+        System.out.println();
+        System.out.println("top " + count + " influencers:");
+        for (String username : influencers.subList(0, Math.min(count, influencers.size()))) {
+            int followers = 0;
+            for (Set<String> followed : followsGraph.values()) {
+                if (followed.contains(username)) {
+                    followers++;
+                }
+            }
+            System.out.println("    " + username + " (" + followers + " followers)");
         }
     }
 
